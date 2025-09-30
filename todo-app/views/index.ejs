@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chirag Thanki</title>
+    <link rel="shortcut icon" href="/views/favicon.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f4f7fa;
+            color: #333;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        form[action="/add"] {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #3498db;
+            color: white;
+            font-size: 15px;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        li:hover {
+            transform: scale(1.02);
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        li form {
+            display: inline;
+        }
+
+        li button {
+            background: #27ae60;
+            border-radius: 6px;
+            margin-left: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        li button:hover {
+            background: #1e8449;
+        }
+
+        li form[action*="delete"] button {
+            background: #e74c3c;
+        }
+
+        li form[action*="delete"] button:hover {
+            background: #c0392b;
+        }
+
+        li form[action*="toggle"] button {
+            background: #f39c12;
+        }
+
+        li form[action*="toggle"] button:hover {
+            background: #d68910;
+        }
+
+        span {
+            flex: 1;
+            margin: 0 10px;
+            font-size: 16px;
+        }
+
+        a {
+            display: inline-block;
+            font-size: 16px;
+            color: #3498db;
+            transition: all 0.3s ease-in-out;
+        }
+
+        a:hover {
+            transform: scale(1.1);
+            color: #e67e22;
+            text-shadow: 0 0 8px rgba(230, 126, 34, 0.7);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>TaskFlow</h1>
+    <h2>A Smart Task Management System</h2>
+
+    <form action="/add" method="POST">
+        <input type="text" name="task" placeholder="New Task" required />
+        <button type="submit">Add</button>
+    </form>
+
+    <ul>
+        <% todos.forEach(todo=> { %>
+            <li>
+                <!-- Toggle -->
+                <form action="/toggle/<%= todo._id %>" method="POST" style="display:inline;">
+                    <button type="submit">
+                        <%= todo.completed ? "Undo" : "Done" %>
+                    </button>
+                </form>
+
+                <!-- Task text -->
+                <span id="text-<%= todo._id %>" class="<%= todo.completed ? 'completed' : '' %>">
+                    <%= todo.task %>
+                </span>
+
+                <!-- Hidden update form -->
+                <form id="form-<%= todo._id %>" action="/update/<%= todo._id %>" method="POST" style="display:none;">
+                    <input type="text" name="task" value="<%= todo.task %>" required />
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="cancelEdit('<%= todo._id %>')">Cancel</button>
+                </form>
+
+                <!-- Edit + Delete -->
+                <button type="button" onclick="editTask('<%= todo._id %>')">Edit</button>
+                <form action="/delete/<%= todo._id %>" method="POST" style="display:inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+            <% }) %>
+    </ul>
+
+    <footer>
+        <p>Created by &ensp;<a href="https://www.linkedin.com/in/chigs-thanky/" target="_blank">Chirag Thanki</a></p>
+    </footer>
+
+    <script>
+        function editTask(id) {
+            document.getElementById("text-" + id).style.display = "none";
+            document.getElementById("form-" + id).style.display = "inline";
+        }
+        function cancelEdit(id) {
+            document.getElementById("text-" + id).style.display = "inline";
+            document.getElementById("form-" + id).style.display = "none";
+        }
+    </script>
+</body>
+
+</html>
